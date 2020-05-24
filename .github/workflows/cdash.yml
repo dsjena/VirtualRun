@@ -1,0 +1,113 @@
+name: Refresh
+on: 
+  push:
+  schedule:
+    - cron:  '25 */3 * 2 *'
+jobs:
+  build:
+    name: refresh the dashboard
+    runs-on: macos-latest
+    steps:
+      #- uses: actions/checkout@v1
+      #    with: cdash
+      #- uses: r-lib/actions/setup-r@v1
+      #- uses: r-lib/actions/setup-pandoc@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: main
+      #
+      
+      - name: Publish To WD
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/cdash
+          token: ${{ secrets.SUPER_SECRET }}
+          path: cdash      
+      - name: Set R-Lib
+        uses: r-lib/actions/setup-r@master
+        with:
+          repository: ${{ github.repository }}
+          ref: 'master'
+          token: ${{ github.token }}
+          clean: 'true'
+          fetch-depth: '1'
+      - name: pandoc
+        uses: r-lib/actions/setup-pandoc@v1
+      - name: Install CRAN packages
+        run: |
+          cd ./cdash/
+          sh dependency.sh > log.txt 2>&1
+      - name: Run The script
+        run: |
+          cd ./cdash/
+          #Rscript -e 'rmarkdown::render("india.Rmd")'
+          sh run.sh >> log.txt 2>&1
+          dtt=`date`
+          echo "${dtt}" >> processed.md
+          bash make-rdme.sh >> log.txt 2>&1
+      - name:  push to git
+        run: |
+          cd ./cdash/ 
+          git remote -v
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git status
+          git diff-index --quiet HEAD || git commit -m "Update json" -a
+          git push
+      - name: Publish To WD
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/ncv-wd
+          token: ${{ secrets.SUPER_SECRET }}
+          path: ncv-wd
+      - name: Actual Transfer
+        run: |
+          cd ./ncv-wd/
+          ls 
+          cp -r ../cdash/world.html docs/index.html
+          echo ${GITHUB_WORKSPACE}
+          dtt=`date`
+          echo "${dtt}" >> recieved.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update Raw Data" -a
+          git push
+      - name: Publish To IN
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/ncv-in
+          token: ${{ secrets.SUPER_SECRET }}
+          path: ncv-in
+      - name: Actual Transfer
+        run: |
+          cd ./ncv-in/
+          ls 
+          cp -r ../cdash/india.html docs/index.html
+          echo ${GITHUB_WORKSPACE}
+          dtt=`date`
+          echo "${dtt}" >> recieved.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update Raw Data" -a
+          git push
+      - name: Publish To API
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/ncv-api
+          token: ${{ secrets.SUPER_SECRET }}
+          path: ncv-api
+      - name: push to API
+        run: |
+          cd ./ncv-api/
+          ls
+          cp -r ../cdash/data/*.json docs/.
+          echo ${GITHUB_WORKSPACE}
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update json" -a
+          git push
