@@ -1,8 +1,8 @@
 name: Data Collector
 on:
-  #push:
+  push:
   schedule:
-    - cron:  '0 3,12,23 * 1 *'
+    - cron:  '15 */3 * * *'
 
 jobs:
   extract_job:
@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          path: main
+          path: current
       - name: Get OWD data
         uses: actions/checkout@v2
         with:
@@ -27,7 +27,13 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-      
+      - name: Publish Real
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/dcol
+          token: ${{ secrets.SUPER_SECRET }}
+          path: main
+      - name: Actual Calculation      
       - name: Install dependencies
         run: |
           cd ./main/ 
