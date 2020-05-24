@@ -3,7 +3,6 @@ on:
   push:
   schedule:
     - cron:  '15 */3 * * *'
-
 jobs:
   extract_job:
     runs-on: ubuntu-latest
@@ -32,14 +31,12 @@ jobs:
         with:
           repository: dsjena/dcol
           token: ${{ secrets.SUPER_SECRET }}
-          path: main
-      - name: Actual Calculation      
+          path: main     
       - name: Install dependencies
         run: |
           cd ./main/ 
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-        
+          pip install -r requirements.txt      
       - name: Produce Files
         run: |
           cd ./main/
