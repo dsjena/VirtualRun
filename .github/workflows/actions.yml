@@ -1,0 +1,62 @@
+name: Data Collector
+on:
+  #push:
+  schedule:
+    - cron:  '0 * * 4 *'
+
+jobs:
+  extract_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: main
+      - name: Set up me python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      
+      - name: Install dependencies
+        run: |
+          cd ./main/ 
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        
+      - name: Produce Files
+        run: |
+          cd ./main/
+          ls
+          python main.py 1HR
+          
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git status
+          git diff-index --quiet HEAD || git commit -m "Update 60 M " -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: main
+
+      - name: Publish To Web
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/ncv-api
+          token: ${{ secrets.SUPER_SECRET }}
+          path: data
+      - name: Push To Data
+        run: |
+          cd ./data/
+          ls
+          echo ${GITHUB_WORKSPACE}
+          #ls  ${GITHUB_WORKSPACE}
+          #ls ${GITHUB_WORKSPACE}/main/
+          cp -r ${GITHUB_WORKSPACE}/main/data/*.json docs/.
+          #echo ${GITHUB_WORKSPACE}
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update json" -a
+          git push
