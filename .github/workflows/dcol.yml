@@ -2,7 +2,7 @@ name: Data Collector
 on:
   #push:
   schedule:
-    - cron:  '15 */3 * * *'
+    - cron:  '15 4,10,12,15,22,1 * * *'
 jobs:
   dcoljob:
     runs-on: ubuntu-latest
