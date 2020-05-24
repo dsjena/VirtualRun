@@ -1,8 +1,8 @@
 name: Refresh
 on: 
-  push:
+  #push:
   schedule:
-    - cron:  '25 */3 * 2 *'
+    - cron:  '25 */3 * * *'
 jobs:
   build:
     name: refresh the dashboard
