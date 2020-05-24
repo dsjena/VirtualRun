@@ -19,11 +19,12 @@ jobs:
       - name: Set R-Lib
         uses: r-lib/actions/setup-r@master
         with:
-          repository: ${{ github.repository }}
-          ref: 'master'
-          token: ${{ github.token }}
-          clean: 'true'
-          fetch-depth: '1'
+          r-version: '3.6.1'
+          #repository: ${{ github.repository }}
+          #ref: 'master'
+          #token: ${{ github.token }}
+          #clean: 'true'
+          #fetch-depth: '1'
       - name: pandoc
         uses: r-lib/actions/setup-pandoc@v1      
       
