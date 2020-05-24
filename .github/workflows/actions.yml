@@ -5,7 +5,7 @@ on:
     - cron:  '0 * * * *'
 
 jobs:
-  extract_job:
+  wpjob:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
