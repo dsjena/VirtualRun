@@ -35,7 +35,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           python main.py 1HR 
-          git config --local user.email "sri.satyajit.jena@github.com"
+          git config --local user.email "36220371+dsjena@users.noreply.github.com"
           git config --local user.name "dsjena"
           git add .
           git status
@@ -54,7 +54,7 @@ jobs:
           ls
           cp -r ${GITHUB_WORKSPACE}/wp/data/*.json docs/.
           #echo ${GITHUB_WORKSPACE}
-          git config --local user.email "sri.satyajit.jena@github.com"
+          git config --local user.email "36220371+dsjena@users.noreply.github.com"
           git config --local user.name "dsjena"
           git add .
           git diff-index --quiet HEAD || git commit -m "Update json" -a

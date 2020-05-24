@@ -50,8 +50,8 @@ jobs:
         run: |
           cd ./cdash/ 
           git remote -v
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "36220371+dsjena@users.noreply.github.com"
+          git config --local user.name "dsjena"
           git add .
           git status
           git diff-index --quiet HEAD || git commit -m "Update json" -a
@@ -70,8 +70,8 @@ jobs:
           echo ${GITHUB_WORKSPACE}
           dtt=`date`
           echo "${dtt}" >> recieved.md
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "36220371+dsjena@users.noreply.github.com"
+          git config --local user.name "dsjena"
           git add .
           git diff-index --quiet HEAD || git commit -m "Update Raw Data" -a
           git push
@@ -89,8 +89,8 @@ jobs:
           echo ${GITHUB_WORKSPACE}
           dtt=`date`
           echo "${dtt}" >> recieved.md
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "36220371+dsjena@users.noreply.github.com"
+          git config --local user.name "dsjena"
           git add .
           git diff-index --quiet HEAD || git commit -m "Update Raw Data" -a
           git push
@@ -106,8 +106,8 @@ jobs:
           ls
           cp -r ../cdash/data/*.json docs/.
           echo ${GITHUB_WORKSPACE}
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "36220371+dsjena@users.noreply.github.com"
+          git config --local user.name "dsjena"
           git add .
           git diff-index --quiet HEAD || git commit -m "Update json" -a
           git push
