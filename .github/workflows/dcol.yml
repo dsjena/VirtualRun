@@ -26,7 +26,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-      - name: Publish Real
+      
+      - name: Real
         uses: actions/checkout@v2
         with:
           repository: dsjena/dcol
@@ -54,13 +55,8 @@ jobs:
           git add .
           git status
           git diff-index --quiet HEAD || git commit -m "Update json" -a
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          directory: main
-
+          git push
+          
       - name: Publish To Web
         uses: actions/checkout@v2
         with:
@@ -79,7 +75,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "Update json" -a
           git push
 
-      - name: Publish To R Repo
+      - name: Publish To R
         uses: actions/checkout@v2
         with:
           repository: dsjena/cdash
