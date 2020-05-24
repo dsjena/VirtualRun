@@ -2,7 +2,7 @@ name: Data Collector
 on:
   #push:
   schedule:
-    - cron:  '0 * * 4 *'
+    - cron:  '0 * * * *'
 
 jobs:
   extract_job:
@@ -23,23 +23,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
         
-      - name: Produce Files
+      - name: Publish To WD
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/corona-wp
+          token: ${{ secrets.SUPER_SECRET }}
+          path: wp
+      - name: Actual Transfer
         run: |
-          cd ./main/
-          ls
-          python main.py 1HR
-          
+          cd ./wp/ 
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python main.py 1HR 
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
           git status
           git diff-index --quiet HEAD || git commit -m "Update 60 M " -a
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          directory: main
-
+          git push
+          
       - name: Publish To Web
         uses: actions/checkout@v2
         with:
@@ -50,10 +52,7 @@ jobs:
         run: |
           cd ./data/
           ls
-          echo ${GITHUB_WORKSPACE}
-          #ls  ${GITHUB_WORKSPACE}
-          #ls ${GITHUB_WORKSPACE}/main/
-          cp -r ${GITHUB_WORKSPACE}/main/data/*.json docs/.
+          cp -r ${GITHUB_WORKSPACE}/wp/data/*.json docs/.
           #echo ${GITHUB_WORKSPACE}
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
