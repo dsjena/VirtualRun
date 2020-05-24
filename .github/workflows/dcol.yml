@@ -1,0 +1,98 @@
+name: Data Collector
+on:
+  #push:
+  schedule:
+    - cron:  '0 3,12,23 * 1 *'
+
+jobs:
+  extract_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: main
+      - name: Get OWD data
+        uses: actions/checkout@v2
+        with:
+          repository: owid/covid-19-data
+          path: owd
+      - name: Get ulklc
+        uses: actions/checkout@v2
+        with:
+          repository:  ulklc/covid19-timeseries
+          path: ulklc
+     
+      - name: Set up me python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      
+      - name: Install dependencies
+        run: |
+          cd ./main/ 
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        
+      - name: Produce Files
+        run: |
+          cd ./main/
+          sh run.sh &> dcol-log.txt
+          python main.py
+          python ConvertData.py
+          ls ${GITHUB_WORKSPACE}
+          rsync -av ${GITHUB_WORKSPACE}/owd/scripts/* owd/scripts/. &>> dcol-log.txt
+          rsync -av ${GITHUB_WORKSPACE}/owd/public/data/* owd/ot/.  &>> dcol-log.txt
+          rsync -av ${GITHUB_WORKSPACE}/ulklc/countryReport/* ulklc/. &>> dcol-log.txt
+          dtt=`date`
+          echo "Date Recieved at: ${dtt} </br>" >> README.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git status
+          git diff-index --quiet HEAD || git commit -m "Update json" -a
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: main
+
+      - name: Publish To Web
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/ncv-api
+          token: ${{ secrets.SUPER_SECRET }}
+          path: data
+      - name: Actual Calculation
+        run: |
+          cd ./data/
+          ls 
+          cp -r ../main/json/*.json docs/.
+          echo ${GITHUB_WORKSPACE}
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update json" -a
+          git push
+
+      - name: Publish To R Repo
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/cdash
+          token: ${{ secrets.SUPER_SECRET }}
+          path: cdash
+      - name: Actual Calculation
+        run: |
+          cd ./cdash/
+          ls 
+          cp -r ../main/india/IndianState*R.csv csv/.
+          cp -r ../main/jhu/jhu_time_series*.csv csv/.
+          echo ${GITHUB_WORKSPACE}
+          dtt=`date`
+          echo "${dtt}" >> recieved.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update Raw Data" -a
+          git push
