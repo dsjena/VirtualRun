@@ -1,4 +1,4 @@
-name: Refresh
+name: cdash
 on: 
   #push:
   schedule:
