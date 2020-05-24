@@ -16,14 +16,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: main
-      #
-      
-      - name: Publish To WD
-        uses: actions/checkout@v2
-        with:
-          repository: dsjena/cdash
-          token: ${{ secrets.SUPER_SECRET }}
-          path: cdash      
       - name: Set R-Lib
         uses: r-lib/actions/setup-r@master
         with:
@@ -33,7 +25,14 @@ jobs:
           clean: 'true'
           fetch-depth: '1'
       - name: pandoc
-        uses: r-lib/actions/setup-pandoc@v1
+        uses: r-lib/actions/setup-pandoc@v1      
+      
+      - name: Publish To WD
+        uses: actions/checkout@v2
+        with:
+          repository: dsjena/cdash
+          token: ${{ secrets.SUPER_SECRET }}
+          path: cdash      
       - name: Install CRAN packages
         run: |
           cd ./cdash/
