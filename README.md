@@ -47,26 +47,31 @@ We can then start the docker service with the following command.
 # service docker start
 ```
 
-Thanks to collaborative project and it is contributor for the (container ecosystem to assemble container-based systems](https://github.com/moby/moby), who have provided a script to create a base CentOS Docker image using yum.
+Thanks to collaborative project and it is contributor for the [container ecosystem to assemble container-based systems](https://github.com/moby/moby), who have provided a script to create a base CentOS Docker image using yum.
 
 The [script](https://github.com/moby/moby/blob/master/contrib/mkimage-yum.sh) is now available on Moby Project Github repository. A Copy of script also available in this repo. Please not this script it not created by me, it is taken of [moby](https://github.com/moby/moby)
 
-We now need to create a folder called scripts in the root and then create a file called createimage.sh in the folder. This step can be summarized as the following commands.
+create a folder named scripts in the root and copy this (createimage.sh) in the folder. This step can be summarized as the following commands.
 
 ```
 # mkdir scripts
 # cd scripts
-# vim createimage.sh
+# wget https://raw.githubusercontent.com/dsjena/VirtualRun/master/make-image.sh
 ```
-We then need to copy-and-paste the script from Moby Project to createimage.sh.
+check if the script is there or not
 
-After that, we need to make createimage.sh executable with the following command.
 ```
-# chmod +x createimage.sh
+#ls
+you should see
+make-image.sh
+```
+Make make-image.sh executable with the following command.
+```
+# chmod +x make-image.sh
 ```
 To run this script now, we need to do as follows, where centos7base is the name of the image file.
 
 ```
-# ./createimage.sh centos7base
+# ./make-image.sh centos7base
 ```
 It will create a centos7base image and will add to docker. 
