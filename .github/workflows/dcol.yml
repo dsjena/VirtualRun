@@ -1,10 +1,10 @@
 name: Data Collector
 on:
-  push:
+  #push:
   schedule:
     - cron:  '15 */3 * * *'
 jobs:
-  extract_job:
+  dcoljob:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
